@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+dependencies {
+	// Standard starters
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// ShardingSphere JDBC Driver & Standalone SPI Mode
+	implementation 'org.apache.shardingsphere:shardingsphere-jdbc-core:5.4.1'
+	implementation 'org.apache.shardingsphere:shardingsphere-standalone-mode-repository-jdbc:5.4.1'
+
+	// MySQL Driver
+	implementation 'com.mysql:mysql-connector-j'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// Fix duplicate jar entry conflicts for Gradle 9+
+tasks.named('bootJar') {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.named('jar') {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
