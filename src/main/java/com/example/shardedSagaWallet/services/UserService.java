@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -20,5 +23,14 @@ public class UserService {
         User newUser = this.userRepository.save(user);
         log.info("User created with id {} in database shardwallet{}", newUser.getId(), newUser.getId() % 2 + 1);
         return newUser;
+    }
+
+    public Optional<User> getUserById(Long id){
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()){
+            log.info("User with user id: " + id + " does not exist");
+            return Optional.empty();
+        }
+        return user;
     }
 }
