@@ -24,7 +24,8 @@ dependencies {
 	// ShardingSphere JDBC Driver & Standalone SPI Mode
 	implementation 'org.apache.shardingsphere:shardingsphere-jdbc-core:5.4.1'
 	implementation 'org.apache.shardingsphere:shardingsphere-standalone-mode-repository-jdbc:5.4.1'
-
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.8'
+	implementation 'org.yaml:snakeyaml:1.33'
 	// MySQL Driver
 	implementation 'com.mysql:mysql-connector-j'
 
@@ -47,4 +48,9 @@ tasks.named('bootJar') {
 
 tasks.named('jar') {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+configurations.all {
+	resolutionStrategy {
+		force 'org.yaml:snakeyaml:1.33'
+	}
 }
