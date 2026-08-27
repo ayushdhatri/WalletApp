@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,4 +30,14 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(existedUser);
     }
+
+    @GetMapping("/name")
+    public ResponseEntity<List<User>> getUserByName(@RequestParam String name){
+        List<User> users = userService.getUserByName(name);
+        if(users == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(users);
+    }
+
 }

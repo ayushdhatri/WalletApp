@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,4 +34,15 @@ public class UserService {
         }
         return user;
     }
+
+    public List<User> getUserByName(String name){
+        List<User> users = userRepository.findByNameContainingIgnoreCase(name);
+        for(User user : users){
+            log.info("User with id : {} is fetched from data shardwallet{}", user.getId(), user.getId()%2+1);
+        }
+        return users;
+    }
+
+
+
 }
