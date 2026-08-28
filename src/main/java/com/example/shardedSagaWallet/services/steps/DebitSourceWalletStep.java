@@ -65,6 +65,6 @@ public class DebitSourceWalletStep implements SagaStep {
 
     @Override
     public String getStepName() {
-        return "";
+        return "DebitSourceWalletStep";
     }
 }
