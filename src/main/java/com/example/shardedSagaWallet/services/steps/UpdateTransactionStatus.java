@@ -5,6 +5,7 @@ import com.example.shardedSagaWallet.entities.TransactionStatus;
 import com.example.shardedSagaWallet.repositories.TransactionRepository;
 import com.example.shardedSagaWallet.services.saga.SagaContext;
 import com.example.shardedSagaWallet.services.saga.SagaStep;
+import com.example.shardedSagaWallet.services.saga.SagaStepFactory;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,6 @@ public class UpdateTransactionStatus implements SagaStep {
 
     @Override
     public String getStepName() {
-        return "UpdateTransactionStatus";
+        return SagaStepFactory.SagaStepType.UPDATE_TRANSACTION_STATUS_STEP.toString();
     }
 }

@@ -36,7 +36,9 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
 
     @Override
     public boolean executeStep(Long sagaInstanceId, String stepName) {
-        return false;
+        SagaInstance sagaInstance = sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(() -> new RuntimeException("saga with instance id:" + sagaInstanceId+" not found!"));
+
+
     }
 
     @Override
