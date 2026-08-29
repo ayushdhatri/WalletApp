@@ -98,6 +98,7 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     }
 
     @Override
+    @Transactional
     public boolean compensateStep(Long sagaInstanceId, String stepName) {
         SagaInstance sagaInstance = sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(() -> new RuntimeException("saga with instance id:" + sagaInstanceId+" not found!"));
 
@@ -145,11 +146,13 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     }
 
     @Override
+    @Transactional
     public SagaInstance getSagaInstance(Long sagaInstanceId) {
         return sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(() -> new RuntimeException("Saga Instance with id :"+ sagaInstanceId + " not found"));
     }
 
     @Override
+    @Transactional
     public void compensateSaga(Long sagaInstanceId) {
         SagaInstance sagaInstance = sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(()-> new RuntimeException("Saga Instance not found"));
         // mark the saga status as compensating in db
@@ -180,6 +183,7 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     }
 
     @Override
+    @Transactional
     public void failSaga(Long sagaInstanceId) {
         SagaInstance instance = sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(()-> new RuntimeException("Saga Instance not found"));
         instance.setStatus(SagaStatus.FAILED);
@@ -187,6 +191,7 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     }
 
     @Override
+    @Transactional
     public void completeSaga(Long sagaInstanceId) {
         SagaInstance instance = sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(()-> new RuntimeException("Saga Instance not found"));
         instance.setStatus(SagaStatus.COMPLETED);
