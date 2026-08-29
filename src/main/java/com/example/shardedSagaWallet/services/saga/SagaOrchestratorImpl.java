@@ -55,10 +55,12 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
             throw new RuntimeException("Saga Step not found");
         }
 
-        SagaStep sagaStepDB = sagaStepRepository.findBySagaInstanceIdAndStatus(sagaInstanceId, StepStatus.PENDING)
-                .stream()
-                .filter((s)-> s.getStepName().equals(stepName))
-                .findFirst()
+//        SagaStep sagaStepDB = sagaStepRepository.findBySagaInstanceIdAndStatus(sagaInstanceId, StepStatus.PENDING)
+//                .stream()
+//                .filter((s)-> s.getStepName().equals(stepName))
+//                .findFirst()
+//                .orElse(SagaStep.builder().sagaInstanceId(sagaInstanceId).stepName(stepName).status(StepStatus.PENDING).build());
+        SagaStep sagaStepDB = sagaStepRepository.findBySagaInstanceIdAndStepNameAndStatus(sagaInstanceId, stepName, StepStatus.PENDING)
                 .orElse(SagaStep.builder().sagaInstanceId(sagaInstanceId).stepName(stepName).status(StepStatus.PENDING).build());
 
         if(sagaStepDB.getId() == null){
