@@ -3,7 +3,7 @@ package com.example.shardedSagaWallet.services.steps;
 import com.example.shardedSagaWallet.entities.Wallet;
 import com.example.shardedSagaWallet.repositories.WalletRepository;
 import com.example.shardedSagaWallet.services.saga.SagaContext;
-import com.example.shardedSagaWallet.services.saga.SagaStep;
+import com.example.shardedSagaWallet.services.saga.SagaStepInterface;
 import com.example.shardedSagaWallet.services.saga.SagaStepFactory;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class DebitSourceWalletStep implements SagaStep {
+public class DebitSourceWalletStepInterface implements SagaStepInterface {
     private WalletRepository walletRepository;
 
     @Override

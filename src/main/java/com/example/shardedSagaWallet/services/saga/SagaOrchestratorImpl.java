@@ -2,6 +2,7 @@ package com.example.shardedSagaWallet.services.saga;
 
 import com.example.shardedSagaWallet.entities.SagaInstance;
 import com.example.shardedSagaWallet.entities.SagaStatus;
+
 import com.example.shardedSagaWallet.repositories.SagaInstanceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     private final ObjectMapper objectMapper;
 
     private final SagaInstanceRepository sagaInstanceRepository;
+
+    private final SagaStepFactory sagaStepFactory;
 
     @Override
     public Long startSaga(SagaContext context) {
@@ -38,7 +41,8 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     public boolean executeStep(Long sagaInstanceId, String stepName) {
         SagaInstance sagaInstance = sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(() -> new RuntimeException("saga with instance id:" + sagaInstanceId+" not found!"));
 
-
+        SagaStepInterface sagaStep = sagaStepFactory.getSagaStep(stepName);
+        return false;
     }
 
     @Override
