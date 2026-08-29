@@ -3,7 +3,10 @@ package com.example.shardedSagaWallet.services.saga;
 import com.example.shardedSagaWallet.entities.SagaInstance;
 import com.example.shardedSagaWallet.entities.SagaStatus;
 
+import com.example.shardedSagaWallet.entities.SagaStep;
+import com.example.shardedSagaWallet.entities.StepStatus;
 import com.example.shardedSagaWallet.repositories.SagaInstanceRepository;
+import com.example.shardedSagaWallet.repositories.SagaStepRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,8 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     private final SagaInstanceRepository sagaInstanceRepository;
 
     private final SagaStepFactory sagaStepFactory;
+
+    private final SagaStepRepository sagaStepRepository;
 
     @Override
     public Long startSaga(SagaContext context) {
@@ -41,7 +46,55 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     public boolean executeStep(Long sagaInstanceId, String stepName) {
         SagaInstance sagaInstance = sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(() -> new RuntimeException("saga with instance id:" + sagaInstanceId+" not found!"));
 
-        SagaStepInterface sagaStep = sagaStepFactory.getSagaStep(stepName);
+        SagaStepInterface step = sagaStepFactory.getSagaStep(stepName);
+        if(step == null){
+            log.error("Saga step not found for step name : {}", stepName);
+            throw new RuntimeException("Saga Step not found");
+        }
+
+        SagaStep sagaStepDB = sagaStepRepository.findBySagaInstanceIdAndStatus(sagaInstanceId, StepStatus.PENDING)
+                .stream()
+                .filter((s)-> s.getStepName().equals(stepName))
+                .findFirst()
+                .orElse(SagaStep.builder().sagaInstanceId(sagaInstanceId).stepName(stepName).status(StepStatus.PENDING).build());
+
+        if(sagaStepDB.getId() == null){
+            sagaStepDB = sagaStepRepository.save(sagaStepDB);
+        }
+
+        try{
+            SagaContext sagaContext = objectMapper.readValue(sagaInstance.getContext(), SagaContext.class);
+            sagaStepDB.setStatus(StepStatus.RUNNING);
+            sagaStepRepository.save(sagaStepDB);
+            boolean success = step.execute(sagaContext);
+
+            if(success){
+                sagaStepDB.setStatus(StepStatus.COMPLETED);
+                sagaStepRepository.save(sagaStepDB);
+                log.info("Step {} executed successfully", stepName);
+                return true;
+            }
+            else{
+                sagaStepDB.setStatus(StepStatus.FAILED);
+                sagaStepRepository.save(sagaStepDB);
+                log.info("Step {} failed", stepName);
+                return false;
+            }
+        }
+        catch (Exception ex){
+            log.error(ex.getMessage());
+            return false;
+        }
+
+
+
+
+
+
+
+
+
+
         return false;
     }
 
