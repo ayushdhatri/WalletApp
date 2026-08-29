@@ -8,11 +8,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SagaStepRepository extends JpaRepository<SagaStep, Long> {
+
     List<SagaStep> findBySagaInstanceId(Long sagaInstanceId);
 
-    @Query("SELECT s FROM SagaStep s WHERE s.sagaInstanceId = :sagaInstanceId AND s.status = 'COMPLETED'")
+    @Query("SELECT s FROM SagaStep s WHERE s.sagaInstanceId = :sagaInstanceId AND s.status = com.example.shardedSagaWallet.entities.StepStatus.COMPLETED")
     List<SagaStep> findCompletedStepsBySagaInstanceId(@Param("sagaInstanceId") Long sagaInstanceId);
 
-    @Query("SELECT s FROM SagaStep s WHERE s.sagaInstanceId = :sagaInstanceId AND s.status IN ('COMPLETED', 'COMPENSATED')")
+    @Query("SELECT s FROM SagaStep s WHERE s.sagaInstanceId = :sagaInstanceId AND s.status IN (com.example.shardedSagaWallet.entities.StepStatus.COMPLETED, com.example.shardedSagaWallet.entities.StepStatus.COMPENSATED)")
     List<SagaStep> findCompletedOrCompensatedStepsBySagaInstanceId(@Param("sagaInstanceId") Long sagaInstanceId);
 }
