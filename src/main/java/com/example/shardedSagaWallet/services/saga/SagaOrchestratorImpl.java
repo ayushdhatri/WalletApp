@@ -8,6 +8,7 @@ import com.example.shardedSagaWallet.entities.StepStatus;
 import com.example.shardedSagaWallet.repositories.SagaInstanceRepository;
 import com.example.shardedSagaWallet.repositories.SagaStepRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     private final SagaStepRepository sagaStepRepository;
 
     @Override
+    @Transactional
     public Long startSaga(SagaContext context) {
         // we need to get a JSON String from context (which is a java object)
         try{
@@ -43,6 +45,7 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
     }
 
     @Override
+    @Transactional
     public boolean executeStep(Long sagaInstanceId, String stepName) {
         SagaInstance sagaInstance = sagaInstanceRepository.findById(sagaInstanceId).orElseThrow(() -> new RuntimeException("saga with instance id:" + sagaInstanceId+" not found!"));
 
@@ -71,6 +74,11 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
             if(success){
                 sagaStepDB.setStatus(StepStatus.COMPLETED);
                 sagaStepRepository.save(sagaStepDB);
+
+                sagaInstance.setCurrentStep(stepName);
+                sagaInstance.setStatus(SagaStatus.RUNNING);
+                sagaInstanceRepository.save(sagaInstance);
+
                 log.info("Step {} executed successfully", stepName);
                 return true;
             }
@@ -82,24 +90,25 @@ public class SagaOrchestratorImpl implements SagaOrchestrator {
             }
         }
         catch (Exception ex){
+            sagaStepDB.setStatus(StepStatus.FAILED);
+            sagaStepRepository.save(sagaStepDB);
             log.error(ex.getMessage());
             return false;
         }
 
-
-
-
-
-
-
-
-
-
-        return false;
     }
 
     @Override
     public boolean compensateStep(Long sagaInstanceId, String stepName) {
+        // Fetch the saga instance from db using the saga instance Id
+
+        // 2. Fetch the saga step from db using the saga instance id and step name
+
+        // 3. Take the context from the saga instance and call the
+
+        // 4. Update the appropriate status in the saga step
+
+
         return false;
     }
 
